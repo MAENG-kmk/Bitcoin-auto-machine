@@ -4,7 +4,7 @@ import pandas as pd
 def cal_target(exchange, symbol):
     btc = exchange.fetch_ohlcv(
         symbol=symbol,
-        timeframe='5m', 
+        timeframe='15m', 
         since=None, 
         limit=10
     )
@@ -14,7 +14,7 @@ def cal_target(exchange, symbol):
 
     yesterday = df.iloc[-2]
     today = df.iloc[-1]
-    if abs(yesterday['high'] - yesterday['low']) < 50:
+    if abs(yesterday['high'] - yesterday['low']) < 100:
         long_target = 1000000
         short_target = 1
     else:
@@ -26,7 +26,7 @@ def cal_target(exchange, symbol):
 def rsi(exchange, symbol):
     btc = exchange.fetch_ohlcv(
         symbol=symbol,
-        timeframe='5m', 
+        timeframe='4h', 
         since=None, 
         limit=15
     )
@@ -115,7 +115,7 @@ def ma_1(exchange, symbol):
 def candle(exchange, symbol):
     btc = exchange.fetch_ohlcv(
         symbol=symbol,
-        timeframe='5m', 
+        timeframe='4h', 
         since=None, 
         limit=26
     )
@@ -136,7 +136,7 @@ def candle(exchange, symbol):
         #         if cur_price < min(df.iloc[-2]['open'], df.iloc[-2]['close']):
         #             return "hanging" # 교수형
         if df.iloc[-2]['high'] - max(df.iloc[-2]['open'], df.iloc[-2]['close']) > df.iloc[-2]['body'] * 2:
-            if df.iloc[-2]['high'] - max(df.iloc[-2]['open'], df.iloc[-2]['close']) > 100:
+            if df.iloc[-2]['high'] - max(df.iloc[-2]['open'], df.iloc[-2]['close']) > 300:
                 return "meteor" # 유성형
         # elif df.iloc[-2]['body'] > df.iloc[-3]['body']:
         #     if df.iloc[-2]['close'] - df.iloc[-2]['open'] < 0 and df.iloc[-3]['close'] - df.iloc[-3]['open'] > 0:
@@ -148,7 +148,7 @@ def candle(exchange, symbol):
         #         if cur_price > df.iloc[-3]['close'] + df.iloc[-3]['body'] * 0.5:
         #             return "mornig star" # 샛별형
         if min(df.iloc[-2]['open'], df.iloc[-2]['close']) - df.iloc[-2]['low'] > df.iloc[-2]['body'] * 2:
-            if min(df.iloc[-2]['open'], df.iloc[-2]['close']) - df.iloc[-2]['low'] > 100:
+            if min(df.iloc[-2]['open'], df.iloc[-2]['close']) - df.iloc[-2]['low'] > 300:
                 return "hammer" # 망치형
         # elif df.iloc[-2]['high'] - max(df.iloc[-2]['open'], df.iloc[-2]['close']) > df.iloc[-2]['body'] * 2:
         #     if df.iloc[-2]['high'] - max(df.iloc[-2]['open'], df.iloc[-2]['close']) > 40:

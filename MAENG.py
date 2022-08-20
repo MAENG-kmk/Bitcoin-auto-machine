@@ -50,7 +50,7 @@ def cal_amount(usdt_balance, cur_price, leverage):
 
 #포지션 진입 함수
 def enter_position(exchange, symbol, cur_price, position, usdt):
-    global enter_price, first_time_long, first_time_short, last_price, buy_price, sell_price, flow, flow_1
+    global enter_price, first_time_long, first_time_short, last_price, buy_price, sell_price, flow, flow_1, leverage
     amount1 = cal_amount(usdt, cur_price, leverage)
     if flow == "up" and flow_1 == "up":         #이동평균 > 0
         first_time_short = 1
