@@ -17,9 +17,9 @@ binance = ccxt.binance(config={
 symbol = "BTC/USDT"
 btc = binance.fetch_ohlcv(
         symbol=symbol,
-        timeframe='1h', 
+        timeframe='4h', 
         since=None, 
-        limit=24*30
+        limit=6 * 30 * 3
     )
 df = pd.DataFrame(data=btc, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])
 df['datetime'] = pd.to_datetime(df['datetime'], unit='ms')
@@ -34,7 +34,7 @@ def rsi(df):
     ad = 0
     d = 0
     # cur = cur_price - df.iloc[-1]['open']
-    for i in df.iloc[:14]['size']:
+    for i in df.iloc[-1:-15:-1]['size']:
         if i >= 0:
             au += i
             u += 1
@@ -54,20 +54,19 @@ def rsi(df):
 
 # 캔들 모양
 def candle(df):
-    market_trend = rsi(df)
 
-    if df.iloc[-2]['high'] - max(df.iloc[-2]['open'], df.iloc[-2]['close']) > df.iloc[-2]['body']:
-        if df.iloc[-2]['high'] - max(df.iloc[-2]['open'], df.iloc[-2]['close']) > 200:
+    if df.iloc[-1]['high'] - max(df.iloc[-1]['open'], df.iloc[-1]['close']) > df.iloc[-1]['body']:
+        if df.iloc[-1]['high'] - max(df.iloc[-1]['open'], df.iloc[-1]['close']) > 200:
             return "meteor" # 유성형
     
-    if min(df.iloc[-2]['open'], df.iloc[-2]['close']) - df.iloc[-2]['low'] > df.iloc[-2]['body']:
-        if min(df.iloc[-2]['open'], df.iloc[-2]['close']) - df.iloc[-2]['low'] > 200:
+    if min(df.iloc[-1]['open'], df.iloc[-1]['close']) - df.iloc[-1]['low'] > df.iloc[-1]['body']:
+        if min(df.iloc[-1]['open'], df.iloc[-1]['close']) - df.iloc[-1]['low'] > 200:
             return "hammer" # 망치형
 
 # 거래량 비교
 def volume(df):
-    volume1 = df.iloc[-2]['volume']
-    volume2 = df.iloc[-3]['volume']
+    volume1 = df.iloc[-1]['volume']
+    volume2 = df.iloc[-2]['volume']
     if volume1 > volume2 * 1.5:
         return "go"
     else:
@@ -102,14 +101,14 @@ class candle_volume_rsi:
                     # if volume(df) == "go":
                         if candle(df) == "meteor":
                             self.position = "short"
-                            self.price = self.data.iloc[i]['open']
+                            self.price = self.data.iloc[i]['close']
                             self.win_price = self.price * 0.99
                             self.lose_price = self.price * 1.005
                 elif rsi(df) < 45:
                     # if volume(df) == "go":
                         if candle(df) == "hammer":
                             self.position = "long"
-                            self.price = self.data.iloc[i]['open']
+                            self.price = self.data.iloc[i]['close']
                             self.win_price = self.price * 1.01
                             self.lose_price = self.price * 0.995
             elif self.position == "short":
@@ -135,9 +134,9 @@ class candle_volume_rsi:
                     self.price, self.win_price, self.lose_price = 0, 0, 0
                     self.lose += 1
     def result(self):
-        print(self.ror)
-        print(self.win)
-        print(self.lose)
+        print("수익률: ", self.ror)
+        print("승리횟수: ", self.win)
+        print("패배횟수: ", self.lose)
             
             
 backtest = candle_volume_rsi(df, 10000)
