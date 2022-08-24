@@ -117,14 +117,8 @@ position = {
     "cut_price": None,
     "prev": None,
 } 
-enter_price = 0
 
-target = 0
-sell_long = 0
-sell_short = 1000000
-second_chance = 1
-third_chance = 1
-half = 1
+send_message("Start trading")
 
 #동작
 while True: 
