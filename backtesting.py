@@ -19,7 +19,7 @@ btc = binance.fetch_ohlcv(
         symbol=symbol,
         timeframe='4h', 
         since=None, 
-        limit=6 * 30 * 6
+        limit=6 * 30 * 12
     )
 df = pd.DataFrame(data=btc, columns=['datetime', 'open', 'high', 'low', 'close', 'volume'])
 df['datetime'] = pd.to_datetime(df['datetime'], unit='ms')
@@ -215,9 +215,12 @@ class candle_volume_rsi_1candle:
                     self.position = None
                     self.price, sell_price, self.lose_price = 0, 0, 0   
     def result(self):
+        balance = int(self.ror * self.balance)
         print("수익률: ", self.ror)
         print("승리횟수: ", self.win)
         print("패배횟수: ", self.lose)
+        print("잔고: ", balance, "원")
+        
 backtest = candle_volume_rsi_1candle(df, 10000)
 backtest.excute()
 backtest.result()
